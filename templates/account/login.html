@@ -1,0 +1,83 @@
+{% extends "../account_base.html" %}
+
+{% load i18n %}
+{% load account socialaccount %}
+{% load crispy_forms_tags %}
+{% block head_title %}{% trans "Sign In" %}{% endblock %}
+
+{% block shop %}
+<br>
+<br>
+<br>
+<div class="breadcrumb">
+  <div class="container">
+    <div class="breadcrumb-inner">
+
+    </div><!-- /.breadcrumb-inner -->
+  </div><!-- /.container -->
+</div><!-- /.breadcrumb -->
+
+<div class="body-content">
+  <div class="container">
+    <div class="sign-in-page">
+      <div class="row">
+        <!-- Sign-in -->      
+<div class="col-md-6 col-sm-6 sign-in">
+  <h4 class="">Sign in</h4>
+  <p class="">Hello, Welcome to your account.</p>
+<!--{#  <div class="social-sign-in outer-top-xs">
+    <a href="{% url 'social:begin' 'facebook' %}" class="facebook-sign-in"><i class="fa fa-facebook"></i> Facebook orqali kirish</a>
+    <a href="{% url 'social:begin' 'google-oauth2' %}" class="twitter-sign-in"><i class="fa fa-google"></i>Google orqali kirish</a>
+  </div> #} -->
+  <div class="social-sign-in outer-top-xs">
+    {% get_providers as socialaccount_providers %}
+
+{% for provider in socialaccount_providers %}
+{% if provider.id == "openid" %}
+{% for brand in provider.get_brands %}
+    <a href="{% provider_login_url provider.id openid=brand.openid_url process=process %}" class="facebook-sign-in {{provider.id}} {{brand.id}}"><i class="fa fa-facebook"></i> {{brand.name}} orqali kirish</a>
+{% endfor %}
+{% endif %}
+    <a href="{% provider_login_url provider.id process=process scope=scope auth_params=auth_params %}" class="twitter-sign-in"><i class="fa fa-{{provider.id}}"></i>{{provider.name}} orqali kirish</a>
+{% endfor %}
+  </div>
+  <form class="register-form outer-top-xs" role="form" method="POST" action="{% url 'account_login' %}">
+    <div class="form-group">
+        {% csrf_token %}
+        {{ form|crispy }}
+        {% if redirect_field_value %}
+        <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+        {% endif %}
+      </div>
+    <div class="radio outer-xs">
+      <button type="submit" class="btn-upper btn btn-primary checkout-page-button">Login</button>
+        <a href="#" class="forgot-password pull-right">Forgot your Password?</a>
+    </div>
+  </form>         
+</div>
+<!-- Sign-in -->
+
+<!-- create a new account -->
+<div class="col-md-6 col-sm-6 create-new-account">
+ <div class="img-responsive">
+    <img src="/static/sign2.png" style="width:75%; height:auto;" alt="">
+  </div>
+  <div class="pt-3 pb-3 pl-5">
+    <p>You have not account ?</p>
+    <h3 class="section-title">
+      Sign up to start shopping.
+    </h3>
+      <a href="{% url 'account_signup' %}" class="btn-upper btn btn-primary checkout-page-button">Sign Up</a>
+  </div>
+</div>  
+<!-- create a new account -->     </div><!-- /.row -->
+    </div><!-- /.sigin-in-->
+
+</div>
+<br>
+<br>
+<br>
+
+
+
+{% endblock %}
